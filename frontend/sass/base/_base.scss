@@ -1,0 +1,14 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: $color-white;
+}
+
+body {
+  font-family: 'Roboto', sans-serif !important;
+}

@@ -1,0 +1,23 @@
+.login__container {
+  background-color: transparent !important;
+}
+
+.login__paper {
+  width: 23%;
+
+  @include center-element;
+
+  @include respond(desktop) {
+    width: 30%;
+  }
+  @include respond(1100) {
+    width: 35%;
+  }
+  @include respond(small-desktop) {
+    width: 40%;
+  }
+  @include respond(phone) {
+    width: 95%;
+    left: 50%;
+  }
+}

@@ -1,0 +1,16 @@
+export const GET_ERRORS = 'GET_ERRORS';
+
+export const CLEAR_ERRORS = 'CLEAR_ERRORS';
+export const SET_LOADING_TRUE = 'SET_LOADING_TRUE';
+export const SET_LOADING_FALSE = 'SET_LOADING_FALSE';
+export const SET_MESSAGE = 'SET_MESSAGE';
+export const SET_UNLOAD_MESSAGE = 'SET_UNLOAD_MESSAGE';
+
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+
+export const GET_USERS = 'GET_USERS';
+export const CLEAR_USERS = 'CLEAR_USERS';
+
+export const GET_VERIFICATION_PAYLOAD = 'GET_VERIFICATION_PAYLOAD';
+export const GET_TEMPLATE = 'GET_TEMPLATE';
+export const GET_RSS_DATA = 'GET_RSS_DATA';
