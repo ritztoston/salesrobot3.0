@@ -10,11 +10,9 @@ import {setCurrentUser, logoutUser} from './actions/authActions';
 
 //Components
 import Login from './components/auth/Login';
-import Navigation from "./components/navigation/Navigation";
 import Dashboard from "./components/dashboard/Dashboard";
 import Accounts from "./components/accounts/Accounts";
 import AccountDetails from "./components/accounts/AccountDetails";
-import Navigation2 from "./components/navigation/Navigation2";
 import PrivateRoute from "./components/common/PrivateRoute";
 import DivWrapper from "./components/hoc/DivWrapper";
 

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import withStyles from "@material-ui/core/es/styles/withStyles";
 import PropTypes from "prop-types";
+import Loader from 'react-loader-spinner'
 
 const styles = theme => ({
     content: {
@@ -50,12 +51,7 @@ class Loading extends Component {
         return (
             <main className={classes.content}>
                 <div className="u-container-center u-text-align-center u-bg-transparent">
-                    <CircularProgress
-                        className={classes.progress}
-                        variant="indeterminate"
-                        value={this.state.completed}
-                        size={30}
-                    />
+                    <Loader type="Rings" color="#0090ff" height={60} width={60} />
                     <div>{textThatChanges}</div>
                 </div>
             </main>

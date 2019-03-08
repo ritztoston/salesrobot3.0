@@ -3,14 +3,12 @@ import {withStyles} from "@material-ui/core";
 import PropTypes from "prop-types";
 import {Helmet} from "react-helmet";
 import {Base64} from 'js-base64';
-import {getTemplate, getRss} from "../../actions/accountActions";
+import {getTemplate, getFeedTemplate, getRss, getRSSData} from "../../actions/accountActions";
 import connect from "react-redux/es/connect/connect";
 import renderHTML from 'react-render-html';
 import isEmpty from "../../validations/isEmpty";
 import DivWrapper from "../hoc/DivWrapper";
-import Loading from "../common/Loading";
 import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -18,8 +16,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
 import Error from '@material-ui/icons/Error';
-import SwapVert from '@material-ui/icons/SwapVert';
-import classNames from "classnames";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -28,6 +24,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {Link} from "react-router-dom";
 import firstLetterCapital from "../../utils/firstLetterCapital";
+import classNames from "classnames";
+import currentDate from "../../utils/currentDate";
+import Loading from "../common/Loading";
 
 const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -63,6 +62,10 @@ const styles = theme => ({
         paddingTop: 0,
         textAlign: 'center',
     },
+    loading: {
+        height: '100vh',
+        overflow: 'hidden'
+    },
 });
 
 class AccountDetails extends Component {
@@ -70,7 +73,6 @@ class AccountDetails extends Component {
         super(props);
         this.state = {
             account: '',
-            categories: []
         };
 
         this.refresh = this.refresh.bind(this);
@@ -82,235 +84,26 @@ class AccountDetails extends Component {
 
     componentDidMount() {
         const {account} = this.props.match.params;
-        const {getTemplate, getRss} = this.props;
+        const {getRSSData} = this.props;
         const decoded_account = Base64.decode(account);
         this.setState({account: Base64.decode(account)});
 
-        getTemplate(decoded_account);
-        getRss(decoded_account);
+        getRSSData(decoded_account);
     }
 
     createMarkup() {
+        const {index} = this.props.accounts;
         let template = this.props.accounts.template.map(template => template.template.replace(/\\/g, ''));
+        let template1, template2, template3, indexes = '';
+
+        this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template2') {template1 = feed_template.data.replace(/\\"/g, '"');} return null;});
+        this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template') {template2 = feed_template.data.replace(/\\"/g, '"');} return null;});
+        this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template3') {template3 = feed_template.data.replace(/\\"/g, '"');} return null;});
+
         const {rss} = this.props.accounts;
-        const template1 = '<li style="padding-bottom:5px;"> <a href="[URL]"\n' +
-            'data-type="text" style="text-decoration:none;color:#4599c5;line-height:1;font-size:12px">\n' +
-            '[TITLE]\n' +
-            '</a> </li>';
-        const template2 = '<!-- STORY START -->\n' +
-            '\n' +
-            '      <!--[if mso | IE]>\n' +
-            '      <table\n' +
-            '         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"\n' +
-            '      >\n' +
-            '        <tr>\n' +
-            '          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">\n' +
-            '      <![endif]-->\n' +
-            '\n' +
-            '\n' +
-            '      <div  style="background:#ffffff;background-color:#ffffff;Margin:0px auto;max-width:600px;">\n' +
-            '\n' +
-            '        <table\n' +
-            '           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"\n' +
-            '        >\n' +
-            '          <tbody>\n' +
-            '            <tr>\n' +
-            '              <td\n' +
-            '                 style="border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;direction:ltr;font-size:0px;padding:0;text-align:center;vertical-align:top;"\n' +
-            '              >\n' +
-            '                <!--[if mso | IE]>\n' +
-            '                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">\n' +
-            '\n' +
-            '        <tr>\n' +
-            '\n' +
-            '            <td\n' +
-            '               class="" style="vertical-align:top;width:600px;"\n' +
-            '            >\n' +
-            '          <![endif]-->\n' +
-            '\n' +
-            '      <div\n' +
-            '         class="mj-column-per-100 outlook-group-fix" style="font-size:13px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"\n' +
-            '      >\n' +
-            '\n' +
-            '      <table\n' +
-            '         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"\n' +
-            '      >\n' +
-            '        <tbody>\n' +
-            '          <tr>\n' +
-            '            <td  style="vertical-align:top;padding:25px 25px 0 25px;">\n' +
-            '\n' +
-            '      <table\n' +
-            '         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"\n' +
-            '      >\n' +
-            '        <table cellspacing="0" cellpadding="0" align="left" class="table">\n' +
-            '                        <tbody>\n' +
-            '                            <tr>\n' +
-            '                                <td style="padding: 0 !important;">\n' +
-            '                                    <table align="left" cellpadding="0" cellspacing="0" class="table">\n' +
-            '                                        <tbody>\n' +
-            '                                            <tr>\n' +
-            '                                                <td width="5" rowspan="2" style="padding: 0 !important;">\n' +
-            '                                                    <img style="display: block; margin: 0px; border: 0px; border-radius:7px;" alt="space" src="https://salesrobot.com/uploadimages/image/default/space.png">\n' +
-            '                                                </td>\n' +
-            '                                                 <!-- STORY IMAGE START-->\n' +
-            '                                                <td class="left-img-content" style="padding: 0 5px 0 15px; margin: 0;" id="left-img-content-104702987269">\n' +
-            '                                                    <img style="width: 150px; height: 150px; border-radius: 7px;" src="[IMAGE]" alt="Image" width="100" height="100">\n' +
-            '                                                </td>\n' +
-            '                                                 <!-- STORY IMAGE END -->\n' +
-            '                                                <td width="1" rowspan="2" style="padding: 0 !important;">\n' +
-            '                                                    <img style="display: block; margin: 0px; border: 0px;" alt="space" src="https://salesrobot.com/uploadimages/image/default/space.png">\n' +
-            '                                                </td>\n' +
-            '                                            </tr>\n' +
-            '                                            <tr style="padding: 0 !important;">\n' +
-            '                                                <td style="text-align: center; padding: 5px 5px 0 15px;">\n' +
-            '                                                    <span class="left-text-caption" id="left-text-caption-104702987269"></span>\n' +
-            '                                                </td>\n' +
-            '                                            </tr>\n' +
-            '                                        </tbody>\n' +
-            '                                    </table>\n' +
-            '                                    <div class="left-text-content" style="margin: 0 !important; font-family: Ubuntu, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 14px; text-align: justify; color: #000000;" id="left-text-content-104702987269">\n' +
-            '                                        <!--STORY TITLE START-->\n' +
-            '                                            <span style="font-size: 10pt;">\n' +
-            '                                                <a href="[URL]" style="text-decoration:none;font-size:14px;font-weight: bold; letter-spacing: 1px;">\n' +
-            '                                                    <strong>[TITLE]</strong>\n' +
-            '                                                </a>\n' +
-            '                                            </span>\n' +
-            '                                        <!--STORY TITLE END-->\n' +
-            '                                        <!--STORY CONTENT START-->\n' +
-            '                                        <p style="color:#666666;font-size:14px;line-height:18px">\n' +
-            '                                            [CONTENT]<a href="[URL]"> Read More</a>\n' +
-            '                                        </p>\n' +
-            '                                        <!--STORY CONTENT END-->\n' +
-            '                                    </div>\n' +
-            '                                </td>\n' +
-            '                            </tr>\n' +
-            '                        </tbody>\n' +
-            '                    </table>\n' +
-            '      </table>\n' +
-            '\n' +
-            '            </td>\n' +
-            '          </tr>\n' +
-            '        </tbody>\n' +
-            '      </table>\n' +
-            '\n' +
-            '      </div>\n' +
-            '\n' +
-            '          <!--[if mso | IE]>\n' +
-            '            </td>\n' +
-            '\n' +
-            '        </tr>\n' +
-            '\n' +
-            '                  </table>\n' +
-            '                <![endif]-->\n' +
-            '              </td>\n' +
-            '            </tr>\n' +
-            '          </tbody>\n' +
-            '        </table>\n' +
-            '\n' +
-            '      </div>\n' +
-            '\n' +
-            '\n' +
-            '      <!--[if mso | IE]>\n' +
-            '          </td>\n' +
-            '        </tr>\n' +
-            '      </table>\n' +
-            '\n' +
-            '      <table\n' +
-            '         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"\n' +
-            '      >\n' +
-            '        <tr>\n' +
-            '          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">\n' +
-            '      <![endif]-->\n' +
-            '\n' +
-            '\n' +
-            '      <div  style="background:#ffffff;background-color:#ffffff;Margin:0px auto;max-width:600px;">\n' +
-            '\n' +
-            '        <table\n' +
-            '           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"\n' +
-            '        >\n' +
-            '          <tbody>\n' +
-            '            <tr>\n' +
-            '              <td\n' +
-            '                 style="border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;direction:ltr;font-size:0px;padding:0px;text-align:center;vertical-align:top;"\n' +
-            '              >\n' +
-            '                <!--[if mso | IE]>\n' +
-            '                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">\n' +
-            '\n' +
-            '        <tr>\n' +
-            '\n' +
-            '            <td\n' +
-            '               class="" style="vertical-align:top;width:600px;"\n' +
-            '            >\n' +
-            '          <![endif]-->\n' +
-            '\n' +
-            '      <div\n' +
-            '         class="mj-column-per-100 outlook-group-fix" style="font-size:13px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"\n' +
-            '      >\n' +
-            '\n' +
-            '      <table\n' +
-            '         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%" style="border-bottom: 1px solid gray"\n' +
-            '      >\n' +
-            '        <tbody>\n' +
-            '          <tr>\n' +
-            '            <td  style="vertical-align:top;padding:0px;">\n' +
-            '\n' +
-            '      <table\n' +
-            '         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"\n' +
-            '      >\n' +
-            '        <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">\n' +
-            '                        <tbody>\n' +
-            '                            <tr style="line-height:15px;font-family:Helvetica, Arial, sans-serif;">\n' +
-            '                                <td align="justify" style="padding-left:20px;padding-bottom:20px;text-align:center;">\n' +
-            '\n' +
-            '                                    <table align="left" cellpadding="0" cellspacing="0" margin="0" padding="0" style="width:auto;border:collapse;display:inline-block;font-family:Helvetica, Arial, sans-serif;">\n' +
-            '                                        <tbody>\n' +
-            '                                            <tr>\n' +
-            '                                                <td style="padding:2px;">\n' +
-            '                                                    <span style="font-weight: bold;font-size:14px;text-decoration: none; color: #000000;line-height:15px;display:inline-block;padding:2px 0;font-family:Helvetica, Arial, sans-serif;">\n' +
-            '                                                        Tags:\n' +
-            '                                                    </span>\n' +
-            '                                                </td>\n' +
-            '                                            </tr>\n' +
-            '                                        </tbody>\n' +
-            '                                    </table>\n' +
-            '                                    [TAG]\n' +
-            '                                </td>\n' +
-            '                            </tr>\n' +
-            '                        </tbody>\n' +
-            '                    </table>\n' +
-            '      </table>\n' +
-            '\n' +
-            '            </td>\n' +
-            '          </tr>\n' +
-            '        </tbody>\n' +
-            '      </table>\n' +
-            '\n' +
-            '      </div>\n' +
-            '\n' +
-            '          <!--[if mso | IE]>\n' +
-            '            </td>\n' +
-            '\n' +
-            '        </tr>\n' +
-            '\n' +
-            '                  </table>\n' +
-            '                <![endif]-->\n' +
-            '              </td>\n' +
-            '            </tr>\n' +
-            '          </tbody>\n' +
-            '        </table>\n' +
-            '\n' +
-            '      </div>\n' +
-            '\n' +
-            '\n' +
-            '      <!--[if mso | IE]>\n' +
-            '          </td>\n' +
-            '        </tr>\n' +
-            '      </table>\n' +
-            '      <![endif]-->\n' +
-            '\n' +
-            '    <!-- STORY END -->';
 
         let categories = [];
+
         rss.filter(data => {
             if(!isEmpty(categories) && !categories.some(e => e.category === data.category))
                 categories.push({
@@ -324,6 +117,8 @@ class AccountDetails extends Component {
                     list_value: '',
                     details_value: '',
                 });
+
+            return null;
         });
 
         if(categories.length > 0) {
@@ -333,23 +128,39 @@ class AccountDetails extends Component {
                         category.list_value += template1.replace("[TITLE]", data.title).replace("[URL]", data.url);
                         category.details_value += template2.replace("[TITLE]", data.title).replace(/\[URL]/g, data.url).replace("[CONTENT]", data.content).replace("[IMAGE]", data.image).replace("[TAG]", data.tag);
                     }
-                })
+                    return null;
+                });
+                return null;
+            });
+        }
+
+        if(index.length > 0) {
+            index.map(index => {
+                if(!isEmpty(index.image)) {
+                    indexes += template3.replace("[IMAGE]", index.image);
+                }
             })
         }
 
         try {
             if(categories.length > 0) {
                 template = template[0];
+
                 categories.map(category => {
                     const list = "<li>["+category.category+"-]</li>";
                     const details = "["+category.category+"]";
                     template = template.replace(list, category.list_value);
                     template = template.replace(details, category.details_value);
+
+                    return null;
                 });
 
-                if(this.state.categories.length === 0)
-                    this.setState({categories})
+                if(!isEmpty(indexes))
+                    template = template.replace("[INDEX]", indexes);
             }
+
+            template = template.replace("[DATETODAY]", currentDate());
+
         } catch (e) {
             console.log();
         }
@@ -359,8 +170,9 @@ class AccountDetails extends Component {
 
     render() {
         const {classes} = this.props;
-        const {account, categories} = this.state;
+        const {account} = this.state;
         const {loading} = this.props.auth;
+        const {rss} = this.props.accounts;
 
         const html_content = (
             <DivWrapper>
@@ -413,10 +225,10 @@ class AccountDetails extends Component {
             </Dialog>
         );
 
-        const content = categories.length > 0 ? html_content : no_rss;
+        const content = rss.length > 0 ? html_content : no_rss;
 
         return (
-            <main className={classes.content}>
+            <main className={classNames(classes.content, {[classes.loading]: loading})} >
                 <div className={classes.toolbar} />
                 <Helmet>
                     <title>{firstLetterCapital(account)} | SalesRobot3.0</title>
@@ -432,7 +244,9 @@ AccountDetails.propTypes = {
     errors: PropTypes.object.isRequired,
     accounts: PropTypes.object.isRequired,
     getTemplate: PropTypes.func.isRequired,
+    getFeedTemplate: PropTypes.func.isRequired,
     getRss: PropTypes.func.isRequired,
+    getRSSData: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
 };
 
@@ -442,4 +256,4 @@ const mapStateToProps = state => ({
     accounts: state.accounts
 });
 
-export default connect(mapStateToProps, {getTemplate, getRss})(withStyles(styles)(AccountDetails));
+export default connect(mapStateToProps, {getTemplate, getRss, getFeedTemplate, getRSSData})(withStyles(styles)(AccountDetails));

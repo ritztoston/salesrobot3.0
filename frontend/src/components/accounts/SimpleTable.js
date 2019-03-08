@@ -28,7 +28,6 @@ const data = [
     createData('SOS International', 'Gigi Melecio', 'sosi'),
     createData('Leidos', 'Marc Mondala', 'leidos'),
     createData('ExecutiveBiz', 'Em Culion', 'executivebiz'),
-    createData('GovCon Daily', '', 'govcondaily'),
 ];
 
 function SimpleTable(props) {

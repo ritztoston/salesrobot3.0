@@ -2,26 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import {mainListItems} from './listItems';
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LayersIcon from '@material-ui/icons/Layers';
-import LinearProgress from "@material-ui/core/LinearProgress";
+import PlayForWork from '@material-ui/icons/PlayForWork';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Fade from '@material-ui/core/Fade';
+import Hidden from "@material-ui/core/Hidden";
+import connect from "react-redux/es/connect/connect";
+import Avatar from "@material-ui/core/Avatar";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import {logoutUser} from "../../actions/authActions";
+import DivWrapper from "../hoc/DivWrapper";
+import {headerImage} from "../../images/dataimg";
 
 const drawerWidth = 240;
 
@@ -29,20 +33,14 @@ const styles = theme => ({
     root: {
         display: 'flex',
     },
-    toolbar: {
-        paddingRight: 24,
+    appBarTitle: {
+        marginLeft: 0,
+        transition: '.4s all',
+        flexGrow: 1,
     },
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0 8px',
-        ...theme.mixins.toolbar,
-    },
-    toolbarImg: {
-        maxWidth: '6rem',
-        width: '100%',
-        height: 'auto',
+    appBarTitleShift: {
+        marginLeft: 90,
+        transition: '.4s all',
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -50,7 +48,8 @@ const styles = theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
-        backgroundColor: '#0090ff',
+        backgroundColor: '#FFFFFF',
+        color: '#0090ff',
     },
     appBarShift: {
         marginLeft: drawerWidth,
@@ -60,6 +59,59 @@ const styles = theme => ({
             duration: theme.transitions.duration.enteringScreen,
         }),
     },
+    drawer: {
+        zIndex: theme.zIndex.drawer + 5,
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        userSelect: 'none',
+    },
+    mainDrawer: {
+        background: '#18202c',
+        '& *': { color: 'rgba(255, 255, 255, 0.7)' },
+        borderRight: 0,
+    },
+    drawerOpen: {
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    drawerClose: {
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        overflowX: 'hidden',
+        width: theme.spacing.unit * 7 + 1,
+        [theme.breakpoints.up('sm')]: {
+            width: theme.spacing.unit * 9 + 1,
+        },
+    },
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 8px',
+        ...theme.mixins.toolbar,
+        // background: '#48afff',
+        cursor: 'pointer'
+    },
+    toolbarImg: {
+        maxWidth: 150,
+        width: '100%',
+        height: 'auto',
+        userSelect: 'none',
+    },
+    typoNav: {
+        padding: '5px 20px',
+        fontSize: '12px',
+        transition: '.4s all',
+    },
+    typoNavClose: {
+        opacity: 0,
+    },
     menuButton: {
         marginLeft: 12,
         marginRight: 36,
@@ -67,45 +119,16 @@ const styles = theme => ({
     menuButtonHidden: {
         display: 'none',
     },
-    title: {
-        flexGrow: 1,
-    },
-    drawerPaper: {
-        boxShadow: '3px 2px 34px -9px rgba(0,0,0,0.75)',
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing.unit * 7,
-        [theme.breakpoints.up('sm')]: {
-            width: theme.spacing.unit * 9,
-        },
-    },
 });
 
 class Navigation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: true,
-            navbar_title: 'Dashboard',
+            open: false,
+            anchorEl: null,
         };
-        this.OnChangeTitle = this.OnChangeTitle.bind(this);
     }
-
-    OnChangeTitle(e) {
-        this.setState({navbar_title: e.target.textContent, open: false});
-    };
 
     handleDrawerOpen = () => {
         this.setState({ open: true });
@@ -115,82 +138,245 @@ class Navigation extends React.Component {
         this.setState({ open: false });
     };
 
-    render() {
-        const { classes, children } = this.props;
-        const {navbar_title} = this.state;
+    handleMenu = e => {
+        this.setState({ anchorEl: e.currentTarget });
+    };
 
-        return (
+    handleClose = () => {
+        this.setState({ anchorEl: null });
+    };
+
+    onLogoutLink = (e) => {
+        e.preventDefault();
+        const message = "Successfully logged out.";
+        this.setState({ anchorEl: null });
+
+        this.props.logoutUser(message, this.props.users);
+        this.props.history.push("/")
+    };
+
+    render() {
+        const {classes, children, auth} = this.props;
+        const {user} = this.props.auth;
+        const { anchorEl } = this.state;
+        const open = Boolean(anchorEl);
+
+        const nav_content = (
             <div className={classes.root}>
-                <CssBaseline />
-                <AppBar
-                    position="fixed"
-                    className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
-                >
-                    <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
-                        <IconButton
-                            color="inherit"
-                            aria-label="Open drawer"
-                            onClick={this.handleDrawerOpen}
-                            className={classNames(
-                                classes.menuButton,
-                                this.state.open && classes.menuButtonHidden,
-                            )}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            className={classes.title}
-                        >
-                            {navbar_title}
-                        </Typography>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={0} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                    </Toolbar>
-                </AppBar>
-                <Drawer
-                    variant="permanent"
-                    classes={{
-                        paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-                    }}
-                    open={this.state.open}
-                >
-                    <div className={classes.toolbarIcon}>
-                        <Link to="/"><img className={classes.toolbarImg} src="http://www.analyticsapi.salesrobot.com/media/default/headernavblue.png" alt="SalesRobot Logo" /></Link>
-                        <IconButton style={{position: 'absolute', right: 10}} onClick={this.handleDrawerClose}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </div>
-                    <Divider />
-                    <List>
-                        <ListItem button component={Link} to="/dashboard" onClick={this.OnChangeTitle}>
-                            <ListItemIcon>
-                                <DashboardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" />
-                        </ListItem>
-                        <ListItem button component={Link} to="/accounts" onClick={this.OnChangeTitle}>
-                            <ListItemIcon>
-                                <LayersIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Accounts" />
-                        </ListItem>
-                    </List>
-                </Drawer>
+                <CssBaseline/>
+                <Hidden mdUp>
+                    <AppBar
+                        position="fixed"
+                        className={classNames(classes.appBar, {
+                            [classes.appBarShift]: this.state.open,
+                        })}
+                    >
+                        <Toolbar disableGutters={!this.state.open}>
+                            <IconButton
+                                color="inherit"
+                                aria-label="Open drawer"
+                                onClick={this.handleDrawerOpen}
+                                className={classNames(
+                                    classes.menuButton,
+                                    this.state.open && classes.menuButtonHidden,
+                                )}
+                            >
+                                <MenuIcon/>
+                            </IconButton>
+                            <Typography variant="h6" color="inherit" noWrap style={{flexGrow: 1}}>
+                                SalesRobot 3.0
+                            </Typography>
+                            <div>
+                                <IconButton
+                                    aria-owns='menu-appbar'
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                    onClick={this.handleMenu}
+                                >
+                                    <Avatar alt={`${user.firstname} ${user.lastname}`}
+                                            src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}
+                                            className={classes.avatar}/>
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={open}
+                                    onClose={this.handleClose}
+                                    TransitionComponent={Fade}
+                                >
+                                    <MenuItem className={classes.menuItem}>
+                                        <ListItemIcon className={classes.icon}>
+                                            <PlayForWork />
+                                        </ListItemIcon>
+                                        <ListItemText onClick={this.onLogoutLink} classes={{ primary: classes.primary }} inset primary="Logout" />
+                                    </MenuItem>
+                                </Menu>
+                            </div>
+                        </Toolbar>
+                    </AppBar>
+                    <Drawer
+                        variant="temporary"
+                        className={classNames(classes.drawer, {
+                            [classes.drawerOpen]: this.state.open,
+                            [classes.drawerClose]: !this.state.open,
+                        })}
+                        classes={{
+                            paper: classNames(classes.mainDrawer, {
+                                [classes.drawerOpen]: this.state.open,
+                                [classes.drawerClose]: !this.state.open,
+                            }),
+                        }}
+                        open={this.state.open}
+                        onClose={this.handleDrawerClose}
+                    >
+                        <div className={classes.toolbar}
+                             onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
+                            <img className={classes.toolbarImg}
+                                 src={`data:image/png;base64,${headerImage}`}
+                                 alt="SalesRobot Logo"/>
+                        </div>
+                        <List>
+                            <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: !this.state.open,})}
+                                        color="inherit" noWrap>
+                                Navigation
+                            </Typography>
+                            <ListItem button component={Link} to="/dashboard" onClick={this.handleDrawerClose}>
+                                <ListItemIcon>
+                                    <DashboardIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Dashboard"/>
+                            </ListItem>
+                            <ListItem button component={Link} to="/accounts" onClick={this.handleDrawerClose}>
+                                <ListItemIcon>
+                                    <LayersIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Accounts"/>
+                            </ListItem>
+                        </List>
+                    </Drawer>
+                </Hidden>
+                <Hidden smDown>
+                    <AppBar
+                        position="fixed"
+                        className={classNames(classes.appBar, {
+                            [classes.appBarShift]: !this.state.open,
+                        })}
+                    >
+                        <Toolbar disableGutters={this.state.open}>
+                            <Typography
+                                className={classNames(classes.appBarTitle, {
+                                    [classes.appBarTitleShift]: this.state.open,
+                                })}
+                                variant="h6"
+                                color="inherit"
+                                noWrap>
+                                SalesRobot 3.0
+                            </Typography>
+                            <div>
+                                <IconButton
+                                    aria-owns='menu-appbar'
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                    onClick={this.handleMenu}
+                                >
+                                    <Avatar alt={`${user.firstname} ${user.lastname}`}
+                                            src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}
+                                            className={classes.avatar}/>
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={open}
+                                    onClose={this.handleClose}
+                                    TransitionComponent={Fade}
+                                >
+                                    <MenuItem className={classes.menuItem}>
+                                        <ListItemIcon className={classes.icon}>
+                                            <PlayForWork />
+                                        </ListItemIcon>
+                                        <ListItemText onClick={this.onLogoutLink} classes={{ primary: classes.primary }} inset primary="Logout" />
+                                    </MenuItem>
+                                </Menu>
+                            </div>
+                        </Toolbar>
+                    </AppBar>
+                    <Drawer
+                        variant="permanent"
+                        className={classNames(classes.drawer, {
+                            [classes.drawerOpen]: !this.state.open,
+                            [classes.drawerClose]: this.state.open,
+                        })}
+                        classes={{
+                            paper: classNames(classes.mainDrawer, {
+                                [classes.drawerOpen]: !this.state.open,
+                                [classes.drawerClose]: this.state.open,
+                            }),
+                        }}
+                        open={!this.state.open}
+                    >
+                        <div className={classes.toolbar}
+                             onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
+                            <img className={classes.toolbarImg}
+                                 src={`data:image/png;base64,${headerImage}`}
+                                 alt="SalesRobot Logo"/>
+                        </div>
+                        <List>
+                            <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: this.state.open,})}
+                                        color="inherit" noWrap>
+                                Navigation
+                            </Typography>
+                            <ListItem button component={Link} to="/dashboard">
+                                <ListItemIcon>
+                                    <DashboardIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Dashboard"/>
+                            </ListItem>
+                            <ListItem button component={Link} to="/accounts">
+                                <ListItemIcon>
+                                    <LayersIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Accounts"/>
+                            </ListItem>
+                        </List>
+                    </Drawer>
+                </Hidden>
                 {children}
             </div>
+        );
+
+        return (
+            <DivWrapper>
+                {auth.isAuthenticated ? nav_content : children}
+            </DivWrapper>
         );
     }
 }
 
 Navigation.propTypes = {
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
+    logoutUser: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(Navigation);
+const mapStateToProps = state => ({
+    auth: state.auth,
+    errors: state.errors
+});
+
+export default connect(mapStateToProps,{logoutUser})(withStyles(styles, { withTheme: true })(withRouter(Navigation)));
