@@ -127,7 +127,7 @@ class AccountDetails extends Component {
             return null;
         });
 
-        if(categories.length > 0) {
+        if(!isEmpty(categories)) {
             categories.map(category => {
                 rss.map(data => {
                     if(category.category === data.category) {
@@ -140,7 +140,7 @@ class AccountDetails extends Component {
             });
         }
 
-        if(index.length > 0) {
+        if(!isEmpty(index)) {
             index.map(index => {
                 if(!isEmpty(index.image)) {
                     indexes += template3.replace("[IMAGE]", index.image);

@@ -27,6 +27,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {logoutUser} from "../../actions/authActions";
 import DivWrapper from "../hoc/DivWrapper";
 import {headerImage} from "../../images/dataimg";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from "@material-ui/core/Button";
 import isEmpty from "../../validations/isEmpty";
 import {mainListItems} from "./listItems";
@@ -116,7 +117,6 @@ const styles = theme => ({
     },
     menuButton: {
         marginLeft: 12,
-        marginRight: 36,
     },
     menuButtonHidden: {
         display: 'none',
@@ -185,7 +185,11 @@ class Navigation extends React.Component {
                             >
                                 <MenuIcon/>
                             </IconButton>
-                            <Typography variant="h6" color="inherit" noWrap style={{flexGrow: 1}}>
+                            <Typography
+                                className={classes.appBarTitle}
+                                variant="h6"
+                                color="inherit"
+                                noWrap>
                                 {name}
                             </Typography>
                             <div>
@@ -195,9 +199,10 @@ class Navigation extends React.Component {
                                     color="inherit"
                                     onClick={this.handleMenu}
                                 >
-                                    <Avatar alt={`${user.firstname} ${user.lastname}`}
-                                            src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}
-                                            className={classes.avatar}/>
+                                    {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
+                                    {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
+                                    {/*className={classes.avatar}/>*/}
+                                    <AccountCircle/>
                                 </IconButton>
                                 <Menu
                                     anchorEl={anchorEl}
@@ -214,10 +219,12 @@ class Navigation extends React.Component {
                                     TransitionComponent={Fade}
                                 >
                                     <MenuItem className={classes.menuItem}>
-                                        <ListItemIcon className={classes.icon}>
-                                            <PlayForWork />
-                                        </ListItemIcon>
-                                        <ListItemText onClick={this.onLogoutLink} classes={{ primary: classes.primary }} inset primary="Logout" />
+                                        <ListItem button onClick={this.onLogoutLink}>
+                                            <ListItemIcon className={classes.icon}>
+                                                <PlayForWork />
+                                            </ListItemIcon>
+                                            <ListItemText classes={{ primary: classes.primary }} inset primary="Logout" />
+                                        </ListItem>
                                     </MenuItem>
                                 </Menu>
                             </div>
@@ -295,9 +302,10 @@ class Navigation extends React.Component {
                                     color="inherit"
                                     onClick={this.handleMenu}
                                 >
-                                    <Avatar alt={`${user.firstname} ${user.lastname}`}
-                                            src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}
-                                            className={classes.avatar}/>
+                                    {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
+                                    {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
+                                    {/*className={classes.avatar}/>*/}
+                                    <AccountCircle/>
                                 </IconButton>
                                 <Menu
                                     anchorEl={anchorEl}
@@ -313,11 +321,11 @@ class Navigation extends React.Component {
                                     onClose={this.handleClose}
                                     TransitionComponent={Fade}
                                 >
-                                    <MenuItem className={classes.menuItem}>
+                                    <MenuItem onClick={this.onLogoutLink}>
                                         <ListItemIcon className={classes.icon}>
                                             <PlayForWork />
                                         </ListItemIcon>
-                                        <ListItemText onClick={this.onLogoutLink} classes={{ primary: classes.primary }} inset primary="Logout" />
+                                        <ListItemText classes={{ primary: classes.primary }} inset primary="Logout" />
                                     </MenuItem>
                                 </Menu>
                             </div>

@@ -11,8 +11,8 @@ const styles = {
 
 class LinearBuffer extends React.Component {
     state = {
-        completed: 0,
-        buffer: 10,
+        completed: 40,
+        buffer: 50,
     };
 
     componentDidMount() {
