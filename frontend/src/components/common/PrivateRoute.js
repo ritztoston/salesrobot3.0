@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import Navigation from "../navigation/Navigation";
 
-const PrivateRoute = ({component: Component, auth, ...rest}) => <Route {...rest} render = {props => auth.isAuthenticated ? (<Navigation><Component {...props}/></Navigation>) : (<Redirect to="/login" />)}/>;
+const PrivateRoute = ({component: Component, auth, ...rest}) => <Route {...rest} render = {props => auth.isAuthenticated ? (<Navigation name={rest.name} back_path={rest.back_path}><Component {...props}/></Navigation>) : (<Redirect to="/login" />)}/>;
 
 PrivateRoute.propTypes = {
     auth: PropTypes.object.isRequired

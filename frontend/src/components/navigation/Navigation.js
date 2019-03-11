@@ -17,6 +17,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import PlayForWork from '@material-ui/icons/PlayForWork';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 import Fade from '@material-ui/core/Fade';
 import Hidden from "@material-ui/core/Hidden";
 import connect from "react-redux/es/connect/connect";
@@ -26,6 +27,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {logoutUser} from "../../actions/authActions";
 import DivWrapper from "../hoc/DivWrapper";
 import {headerImage} from "../../images/dataimg";
+import Button from "@material-ui/core/Button";
+import isEmpty from "../../validations/isEmpty";
+import {mainListItems} from "./listItems";
 
 const drawerWidth = 240;
 
@@ -34,13 +38,11 @@ const styles = theme => ({
         display: 'flex',
     },
     appBarTitle: {
-        marginLeft: 0,
-        transition: '.4s all',
         flexGrow: 1,
-    },
-    appBarTitleShift: {
-        marginLeft: 90,
-        transition: '.4s all',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -156,7 +158,7 @@ class Navigation extends React.Component {
     };
 
     render() {
-        const {classes, children, auth} = this.props;
+        const {classes, children, auth, name, back_path} = this.props;
         const {user} = this.props.auth;
         const { anchorEl } = this.state;
         const open = Boolean(anchorEl);
@@ -184,7 +186,7 @@ class Navigation extends React.Component {
                                 <MenuIcon/>
                             </IconButton>
                             <Typography variant="h6" color="inherit" noWrap style={{flexGrow: 1}}>
-                                SalesRobot 3.0
+                                {name}
                             </Typography>
                             <div>
                                 <IconButton
@@ -270,14 +272,21 @@ class Navigation extends React.Component {
                         })}
                     >
                         <Toolbar disableGutters={this.state.open}>
+                            {!isEmpty(back_path) ? (<Button
+                                aria-owns='menu-appbar'
+                                aria-haspopup="true"
+                                color="inherit"
+                                component={Link}
+                                to={back_path}
+                            >
+                                <ArrowBackIos /> Back
+                            </Button>) : null}
                             <Typography
-                                className={classNames(classes.appBarTitle, {
-                                    [classes.appBarTitleShift]: this.state.open,
-                                })}
+                                className={classes.appBarTitle}
                                 variant="h6"
                                 color="inherit"
                                 noWrap>
-                                SalesRobot 3.0
+                                {name}
                             </Typography>
                             <div>
                                 <IconButton
@@ -339,18 +348,7 @@ class Navigation extends React.Component {
                                         color="inherit" noWrap>
                                 Navigation
                             </Typography>
-                            <ListItem button component={Link} to="/dashboard">
-                                <ListItemIcon>
-                                    <DashboardIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary="Dashboard"/>
-                            </ListItem>
-                            <ListItem button component={Link} to="/accounts">
-                                <ListItemIcon>
-                                    <LayersIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary="Accounts"/>
-                            </ListItem>
+                            {mainListItems}
                         </List>
                     </Drawer>
                 </Hidden>
@@ -368,6 +366,7 @@ class Navigation extends React.Component {
 
 Navigation.propTypes = {
     auth: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
     errors: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,

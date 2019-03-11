@@ -17,6 +17,7 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
 import Error from '@material-ui/icons/Error';
 import Button from '@material-ui/core/Button';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -27,6 +28,7 @@ import firstLetterCapital from "../../utils/firstLetterCapital";
 import classNames from "classnames";
 import currentDate from "../../utils/currentDate";
 import Loading from "../common/Loading";
+import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -43,6 +45,9 @@ const styles = theme => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 3,
         outline: 'none',
+    },
+    fab: {
+        margin: theme.spacing.unit,
     },
     buttons: {
         color: '#0090ff',
@@ -73,13 +78,19 @@ class AccountDetails extends Component {
         super(props);
         this.state = {
             account: '',
+            open: true,
         };
 
         this.refresh = this.refresh.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     refresh() {
         this.componentDidMount();
+    };
+
+    closeModal() {
+        this.setState({open: false});
     };
 
     componentDidMount() {
@@ -170,7 +181,7 @@ class AccountDetails extends Component {
 
     render() {
         const {classes} = this.props;
-        const {account} = this.state;
+        const {account, open} = this.state;
         const {loading} = this.props.auth;
         const {rss} = this.props.accounts;
 
@@ -184,7 +195,7 @@ class AccountDetails extends Component {
 
         const no_rss = (
             <Dialog
-                open={true}
+                open={open}
                 onClose={this.handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -215,8 +226,11 @@ class AccountDetails extends Component {
                     </List>
                 </DialogContent>
                 <DialogActions>
+                    {/*<Button onClick={this.closeModal} color="primary">*/}
+                        {/*Close*/}
+                    {/*</Button>*/}
                     <Button component={Link} to="/accounts" color="primary">
-                        Close
+                    Close
                     </Button>
                     <Button onClick={this.refresh} color="primary" autoFocus>
                         Retry

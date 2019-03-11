@@ -26,7 +26,7 @@ if(cookie_token) {
     store.dispatch(setCurrentUser(decoded));
 
     const message_content = "Session expired. Please login again.";
-    const current_time = Date.now() /1000;
+    const current_time = Date.now() / 1000;
     if (decoded.exp < current_time) {
         store.dispatch(logoutUser(message_content));
         window.location.href = '/login';
@@ -42,9 +42,9 @@ class App extends Component {
                         <Route exact path="/" component={Login} />
                         <Route exact path="/login" component={Login} />
                         <Switch>
-                            <PrivateRoute exact path="/dashboard" component={Dashboard} />
-                            <PrivateRoute exact path="/accounts" component={Accounts} />
-                            <PrivateRoute exact path="/accounts/:account" component={AccountDetails} />
+                            <PrivateRoute exact path="/dashboard" component={Dashboard} name={"Dashboard"}/>
+                            <PrivateRoute exact path="/accounts" component={Accounts} name={"Accounts"}/>
+                            <PrivateRoute exact path="/accounts/:account" component={AccountDetails} name={"Account Details"} back_path="/accounts"/>
                         </Switch>
                     </DivWrapper>
                 </Router>
