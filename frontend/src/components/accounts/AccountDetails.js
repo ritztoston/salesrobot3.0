@@ -17,7 +17,6 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
 import Error from '@material-ui/icons/Error';
 import Button from '@material-ui/core/Button';
-import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -28,7 +27,6 @@ import firstLetterCapital from "../../utils/firstLetterCapital";
 import classNames from "classnames";
 import currentDate from "../../utils/currentDate";
 import Loading from "../common/Loading";
-import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -103,17 +101,14 @@ class AccountDetails extends Component {
     }
 
     createMarkup() {
-        const {index} = this.props.accounts;
+        const {rss, index} = this.props.accounts;
         let template = this.props.accounts.template.map(template => template.template.replace(/\\/g, ''));
         let template1, template2, template3, indexes = '';
+        let categories = [];
 
         this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template2') {template1 = feed_template.data.replace(/\\"/g, '"');} return null;});
         this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template') {template2 = feed_template.data.replace(/\\"/g, '"');} return null;});
         this.props.accounts.feed_template.filter(feed_template => {if(feed_template.name === 'rss_template3') {template3 = feed_template.data.replace(/\\"/g, '"');} return null;});
-
-        const {rss} = this.props.accounts;
-
-        let categories = [];
 
         rss.filter(data => {
             if(!isEmpty(categories) && !categories.some(e => e.category === data.category))
