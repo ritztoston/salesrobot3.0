@@ -15,7 +15,7 @@ export const mainListItems = (
             {/*</ListItemIcon>*/}
             {/*<ListItemText primary="Dashboard"/>*/}
         {/*</ListItem>*/}
-        <ListItem button component={Link} to="/accounts">
+        <ListItem button component={Link} to="/accounts" style={{marginLeft: 5}}>
             <ListItemIcon>
                 <LayersIcon/>
             </ListItemIcon>

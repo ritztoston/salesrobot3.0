@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import {Table, TableBody, TableCell, TableHead, TableRow, Paper} from '@material-ui/core';
+import blue from "@material-ui/core/es/colors/blue";
+
+const CustomTableCell = withStyles(theme => ({
+    head: {
+        backgroundColor: blue[500],
+        color: theme.palette.common.white,
+    },
+}))(TableCell);
 
 const styles = {
     root: {
@@ -38,8 +41,8 @@ function SimpleTable(props) {
             <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Accounts</TableCell>
-                        <TableCell align="right">Team Lead</TableCell>
+                        <CustomTableCell>Accounts</CustomTableCell>
+                        <CustomTableCell align="right">Team Lead</CustomTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

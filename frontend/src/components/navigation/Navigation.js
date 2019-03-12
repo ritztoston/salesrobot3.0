@@ -256,18 +256,7 @@ class Navigation extends React.Component {
                                         color="inherit" noWrap>
                                 Navigation
                             </Typography>
-                            <ListItem button component={Link} to="/dashboard" onClick={this.handleDrawerClose}>
-                                <ListItemIcon>
-                                    <DashboardIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary="Dashboard"/>
-                            </ListItem>
-                            <ListItem button component={Link} to="/accounts" onClick={this.handleDrawerClose}>
-                                <ListItemIcon>
-                                    <LayersIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary="Accounts"/>
-                            </ListItem>
+                            {mainListItems}
                         </List>
                     </Drawer>
                 </Hidden>
