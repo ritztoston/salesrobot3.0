@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {withStyles} from "@material-ui/core";
 import PropTypes from "prop-types";
 import {Helmet} from "react-helmet";
 import {Base64} from 'js-base64';
@@ -8,25 +7,15 @@ import connect from "react-redux/es/connect/connect";
 import renderHTML from 'react-render-html';
 import isEmpty from "../../validations/isEmpty";
 import DivWrapper from "../hoc/DivWrapper";
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import VerticalAlignBottom from '@material-ui/icons/VerticalAlignBottom';
-import Error from '@material-ui/icons/Error';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import {withStyles, Typography, ListItem, List, ListItemIcon, ListItemText,
+    Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab} from '@material-ui/core';
+import {Drafts as DraftsIcon, Refresh, VerticalAlignBottom, Error, Visibility, VisibilityOff} from '@material-ui/icons';
 import {Link} from "react-router-dom";
 import firstLetterCapital from "../../utils/firstLetterCapital";
 import classNames from "classnames";
 import currentDate from "../../utils/currentDate";
 import Loading from "../common/Loading";
+import queryString from "query-string";
 
 const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -43,9 +32,6 @@ const styles = theme => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 3,
         outline: 'none',
-    },
-    fab: {
-        margin: theme.spacing.unit,
     },
     buttons: {
         color: '#0090ff',
@@ -69,6 +55,18 @@ const styles = theme => ({
         height: '100vh',
         overflow: 'hidden'
     },
+    fab: {
+        margin: 0,
+        bottom: 'auto',
+        right: 40,
+        left: 'auto',
+        position: 'fixed',
+        opacity: 0.2,
+        transition: '.4s all',
+        '&:hover' : {
+            opacity: 1,
+        }
+    },
 });
 
 class AccountDetails extends Component {
@@ -81,10 +79,24 @@ class AccountDetails extends Component {
 
         this.refresh = this.refresh.bind(this);
         this.closeModal = this.closeModal.bind(this);
-    }
+        this.visibility = this.visibility.bind(this);
+    };
 
     refresh() {
         this.componentDidMount();
+    };
+
+    visibility() {
+        const {pathname, search} = this.props.location;
+        const {push} = this.props.history;
+        const parsed = queryString.parse(search);
+
+
+        if(!isEmpty(parsed.view) && parsed.view === 'clear')
+            push(`${pathname}`);
+        else
+            push(`${pathname}?view=clear`);
+
     };
 
     closeModal() {
@@ -145,11 +157,12 @@ class AccountDetails extends Component {
                 if(!isEmpty(index.image)) {
                     indexes += template3.replace("[IMAGE]", index.image);
                 }
+                return null;
             })
         }
 
         try {
-            if(categories.length > 0) {
+            if(!isEmpty(categories)) {
                 template = template[0];
 
                 categories.map(category => {
@@ -175,15 +188,25 @@ class AccountDetails extends Component {
     }
 
     render() {
-        const {classes} = this.props;
+        const {classes, location} = this.props;
         const {account, open} = this.state;
         const {loading} = this.props.auth;
         const {rss} = this.props.accounts;
+        const parsed = queryString.parse(location.search);
 
         const html_content = (
             <DivWrapper>
-                <div className={classes.appBarSpacer} />
-                {renderHTML('<style type="text/css">tr,td {border: 0 !important;} ul {padding-left: 40px;}</style>')}
+                {!isEmpty(parsed.view) && parsed.view === 'clear' ? null : (<div className={classes.appBarSpacer} />)}
+                <div className={classes.fab}>
+                    <Fab color="primary" title="Refresh" aria-label="Refresh" onClick={this.refresh} style={{display: 'block', marginBottom: 10}}>
+                        <Refresh />
+                    </Fab>
+                    <Fab color="primary" title="Clear View" aria-label="Apps" onClick={this.visibility} style={{display: 'block',}}>
+                        {!isEmpty(parsed.view) && parsed.view === 'clear' ? (<VisibilityOff />) : (<Visibility />)}
+                    </Fab>
+                </div>
+
+                {renderHTML('<style type="text/css">ul {padding-left: 40px;}</style>')}
                 <div dangerouslySetInnerHTML={this.createMarkup()}/>
             </DivWrapper>
         );
@@ -205,27 +228,30 @@ class AccountDetails extends Component {
                     <DialogContentText id="alert-dialog-description">
                         Possible reasons stated below:
                     </DialogContentText>
-                    <List component="nav">
-                        <ListItem>
+                    <List component="nav" style={{padding: '20px 0'}}>
+                        <ListItem style={{padding: 0}}>
                             <ListItemIcon>
                                 <DraftsIcon />
                             </ListItemIcon>
                             <ListItemText primary="RSS feed is empty or not updated." />
                         </ListItem>
-                        <ListItem>
+                        <ListItem style={{padding: 0}}>
                             <ListItemIcon>
                                 <VerticalAlignBottom />
                             </ListItemIcon>
                             <ListItemText primary="SalesRobot did not fetch in time. Please try again later." />
                         </ListItem>
                     </List>
+                    <DialogContentText id="alert-dialog-description">
+                        Note: You must wait at least (1) one minute after uploading the RSS feed.
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     {/*<Button onClick={this.closeModal} color="primary">*/}
-                        {/*Close*/}
+                    {/*Close*/}
                     {/*</Button>*/}
                     <Button component={Link} to="/accounts" color="primary">
-                    Close
+                        Back
                     </Button>
                     <Button onClick={this.refresh} color="primary" autoFocus>
                         Retry

@@ -14,7 +14,9 @@ const theme = createMuiTheme({
             main: '#FFFFFF'
         }
     },
-
+    typography: {
+        useNextVariants: true,
+    },
 });
 
 ReactDOM.render(<MuiThemeProvider theme={theme}><App /></MuiThemeProvider>, document.getElementById('root'));
