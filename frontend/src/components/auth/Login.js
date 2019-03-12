@@ -119,8 +119,10 @@ class Login extends Component {
                                                 margin="normal"
                                                 variant="outlined"
                                                 value={username}
+                                                autoFocus
                                                 onChange={this.onChange}
                                                 InputProps={{
+                                                    autoCapitalize: 'none',
                                                     classes: {
                                                         root: classes.cssOutlinedInput,
                                                         focused: classes.cssFocused,
