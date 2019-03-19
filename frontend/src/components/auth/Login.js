@@ -58,7 +58,7 @@ class Login extends Component {
 
     static getDerivedStateFromProps(nextProps) {
         if(nextProps.auth.isAuthenticated) {
-            nextProps.history.push('/campaigns');
+            nextProps.history.push('/accounts');
         }
 
         return null
