@@ -15,6 +15,8 @@ import PropTypes from "prop-types";
 import {loginUser} from "../../actions/authActions";
 import {headerImage} from "../../images/dataimg";
 import LinearBuffer from "../common/LinearBuffer";
+import Hidden from "@material-ui/core/Hidden";
+import Wrapper from "../hoc/Wrapper";
 
 const styles = () => ({
     cssFocused: {},
@@ -56,7 +58,7 @@ class Login extends Component {
 
     static getDerivedStateFromProps(nextProps) {
         if(nextProps.auth.isAuthenticated) {
-            nextProps.history.push('/accounts');
+            nextProps.history.push('/campaigns');
         }
 
         return null
@@ -92,6 +94,87 @@ class Login extends Component {
         const {is_show_password, username, password} = this.state;
         const {classes, errors, auth} = this.props;
 
+        const form_content = (
+            <Wrapper>
+                <Grid item xs={10} className="grid__mui u-text-align-center">
+                    <img src={`data:image/png;base64,${headerImage}`} className="header__logo u-margin-bottom-m" alt="SalesRobot Logo" />
+                </Grid>
+                <Grid item xs={10} className="grid__mui">
+                    <TextField
+                        fullWidth
+                        label="Username"
+                        helperText={errors.username ? errors.username : null}
+                        type="text"
+                        name="username"
+                        autoComplete="username"
+                        margin="normal"
+                        variant="outlined"
+                        value={username}
+                        autoFocus
+                        onChange={this.onChange}
+                        InputProps={{
+                            autoCapitalize: 'none',
+                            classes: {
+                                root: classes.cssOutlinedInput,
+                                focused: classes.cssFocused,
+                                notchedOutline: classes.notchedOutline,
+                            },
+                        }}
+                        error={errors.username}
+                    />
+                </Grid>
+                <Grid item xs={10} className="grid__mui">
+                    <TextField
+                        style={{width: '100%'}}
+                        id="outlined-adornment-password"
+                        variant="outlined"
+                        type={is_show_password ? 'text' : 'password'}
+                        label="Password"
+                        helperText={errors.password ? errors.password : null}
+                        error={errors.password}
+                        name="password"
+                        value={password}
+                        onChange={this.onChange}
+                        InputProps={{
+                            classes: {
+                                root: classes.cssOutlinedInput,
+                                focused: classes.cssFocused,
+                                notchedOutline: classes.notchedOutline,
+                            },
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="Toggle password visibility"
+                                        onClick={this.handleClickShowPassword}
+                                    >
+                                        {is_show_password ? <Visibility xs={2}/> : <VisibilityOff xs={12}/>}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={6} className="u-margin-top-l">
+                    <Button
+                        className={classNames(classes.buttons2)}
+                    >
+                        Forgot Password?
+                    </Button>
+                </Grid>
+                <Grid item xs={4} className="u-margin-top-l u-text-align-right">
+                    <Button
+                        variant="contained"
+                        className={classNames(classes.buttons)}
+                        disabled={auth.loading}
+                        fullWidth
+                        type="submit"
+                    >
+                        Login
+                    </Button>
+                </Grid>
+            </Wrapper>
+        );
+
         return (
             <Fragment>
                 <Helmet>
@@ -103,86 +186,18 @@ class Login extends Component {
                     <form action="#" className="form" autoComplete="off" onSubmit={this.onSubmit} encType="application/json">
                         <Grid container className="login__container">
                             <Grid item xs className="login__container">
-                                <Paper className="paper__mui login__paper">
-                                    <Grid container justify="center" spacing={24} className="u-margin-top-lg u-margin-bottom-s">
-                                        <Grid item xs={10} className="grid__mui u-text-align-center">
-                                            <img src={`data:image/png;base64,${headerImage}`} className="header__logo u-margin-bottom-m" alt="SalesRobot Logo" />
-                                        </Grid>
-                                        <Grid item xs={10} className="grid__mui">
-                                            <TextField
-                                                fullWidth
-                                                label="Username"
-                                                helperText={errors.username ? errors.username : null}
-                                                type="text"
-                                                name="username"
-                                                autoComplete="username"
-                                                margin="normal"
-                                                variant="outlined"
-                                                value={username}
-                                                autoFocus
-                                                onChange={this.onChange}
-                                                InputProps={{
-                                                    autoCapitalize: 'none',
-                                                    classes: {
-                                                        root: classes.cssOutlinedInput,
-                                                        focused: classes.cssFocused,
-                                                        notchedOutline: classes.notchedOutline,
-                                                    },
-                                                }}
-                                                error={errors.username}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={10} className="grid__mui">
-                                            <TextField
-                                                style={{width: '100%'}}
-                                                id="outlined-adornment-password"
-                                                variant="outlined"
-                                                type={is_show_password ? 'text' : 'password'}
-                                                label="Password"
-                                                helperText={errors.password ? errors.password : null}
-                                                error={errors.password}
-                                                name="password"
-                                                value={password}
-                                                onChange={this.onChange}
-                                                InputProps={{
-                                                    classes: {
-                                                        root: classes.cssOutlinedInput,
-                                                        focused: classes.cssFocused,
-                                                        notchedOutline: classes.notchedOutline,
-                                                    },
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                aria-label="Toggle password visibility"
-                                                                onClick={this.handleClickShowPassword}
-                                                            >
-                                                                {is_show_password ? <Visibility xs={2}/> : <VisibilityOff xs={12}/>}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} className="u-margin-top-l">
-                                            <Button
-                                                className={classNames(classes.buttons2)}
-                                            >
-                                                Forgot Password?
-                                            </Button>
-                                        </Grid>
-                                        <Grid item xs={4} className="u-margin-top-l u-text-align-right">
-                                            <Button
-                                                variant="contained"
-                                                className={classNames(classes.buttons)}
-                                                disabled={auth.loading}
-                                                fullWidth
-                                                type="submit"
-                                            >
-                                                Login
-                                            </Button>
-                                        </Grid>
+                                <Hidden mdUp>
+                                    <Grid container justify="center" className="u-margin-top-lg u-margin-bottom-s">
+                                        {form_content}
                                     </Grid>
-                                </Paper>
+                                </Hidden>
+                                <Hidden smDown>
+                                    <Paper className="paper__mui login__paper">
+                                        <Grid container justify="center" spacing={24} className="u-margin-top-lg u-margin-bottom-s">
+                                            {form_content}
+                                        </Grid>
+                                    </Paper>
+                                </Hidden>
                             </Grid>
                         </Grid>
                     </form>

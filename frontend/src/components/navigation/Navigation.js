@@ -30,7 +30,9 @@ import {headerImage} from "../../images/dataimg";
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from "@material-ui/core/Button";
 import isEmpty from "../../validations/isEmpty";
-import {mainListItems} from "./listItems";
+import LinearBuffer from "../common/LinearBuffer";
+import Wrapper from "../hoc/Wrapper";
+import MainListItems from "./MainListItems";
 
 const drawerWidth = 240;
 
@@ -98,7 +100,6 @@ const styles = theme => ({
         justifyContent: 'center',
         padding: '0 8px',
         ...theme.mixins.toolbar,
-        // background: '#48afff',
         cursor: 'pointer'
     },
     toolbarImg: {
@@ -164,193 +165,202 @@ class Navigation extends React.Component {
         const open = Boolean(anchorEl);
 
         const nav_content = (
-            <div className={classes.root}>
-                <CssBaseline/>
-                <Hidden mdUp>
-                    <AppBar
-                        position="fixed"
-                        className={classNames(classes.appBar, {
-                            [classes.appBarShift]: this.state.open,
-                        })}
-                    >
-                        <Toolbar disableGutters={!this.state.open}>
-                            <IconButton
-                                color="inherit"
-                                aria-label="Open drawer"
-                                onClick={this.handleDrawerOpen}
-                                className={classNames(
-                                    classes.menuButton,
-                                    this.state.open && classes.menuButtonHidden,
-                                )}
-                            >
-                                <MenuIcon/>
-                            </IconButton>
-                            <Typography
-                                className={classes.appBarTitle}
-                                variant="h6"
-                                color="inherit"
-                                noWrap>
-                                {name}
-                            </Typography>
-                            <div>
+            <Wrapper>
+
+                <div className={classes.root}>
+                    <CssBaseline/>
+                    <Hidden mdUp>
+                        <AppBar
+                            position="fixed"
+                            className={classNames(classes.appBar, {
+                                [classes.appBarShift]: this.state.open,
+                            })}
+                        >
+                            {auth.loading && <LinearBuffer/>}
+                            <Toolbar disableGutters={!this.state.open}>
                                 <IconButton
+                                    color="inherit"
+                                    aria-label="Open drawer"
+                                    onClick={this.handleDrawerOpen}
+                                    className={classNames(
+                                        classes.menuButton,
+                                        this.state.open && classes.menuButtonHidden,
+                                    )}
+                                >
+                                    <MenuIcon/>
+                                </IconButton>
+                                <Typography
+                                    className={classes.appBarTitle}
+                                    variant="h6"
+                                    color="inherit"
+                                    noWrap>
+                                    {name}
+                                </Typography>
+                                <div>
+                                    <IconButton
+                                        aria-owns='menu-appbar'
+                                        aria-haspopup="true"
+                                        color="inherit"
+                                        onClick={this.handleMenu}
+                                    >
+                                        {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
+                                        {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
+                                        {/*className={classes.avatar}/>*/}
+                                        <AccountCircle/>
+                                    </IconButton>
+                                    <Menu
+                                        anchorEl={anchorEl}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        open={open}
+                                        onClose={this.handleClose}
+                                        TransitionComponent={Fade}
+                                    >
+                                        <MenuItem className={classes.menuItem}>
+                                            <ListItem button onClick={this.onLogoutLink}>
+                                                <ListItemIcon className={classes.icon}>
+                                                    <PlayForWork />
+                                                </ListItemIcon>
+                                                <ListItemText classes={{ primary: classes.primary }} inset primary="Logout" />
+                                            </ListItem>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Toolbar>
+                        </AppBar>
+                        <Drawer
+                            variant="temporary"
+                            className={classNames(classes.drawer, {
+                                [classes.drawerOpen]: this.state.open,
+                                [classes.drawerClose]: !this.state.open,
+                            })}
+                            classes={{
+                                paper: classNames(classes.mainDrawer, {
+                                    [classes.drawerOpen]: this.state.open,
+                                    [classes.drawerClose]: !this.state.open,
+                                }),
+                            }}
+                            open={this.state.open}
+                            onClose={this.handleDrawerClose}
+                        >
+                            <div className={classes.toolbar}
+                                 onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
+                                <img className={classes.toolbarImg}
+                                     src={`data:image/png;base64,${headerImage}`}
+                                     alt="SalesRobot Logo"/>
+                            </div>
+                            <List>
+                                <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: !this.state.open,})}
+                                            color="inherit" noWrap>
+                                    Navigation
+                                </Typography>
+                                <MainListItems onClick={this.handleDrawerClose}/>
+                            </List>
+                        </Drawer>
+                    </Hidden>
+                    <Hidden smDown>
+                        <AppBar
+                            position="fixed"
+                            className={classNames(classes.appBar, {
+                                [classes.appBarShift]: !this.state.open,
+                            })}
+                        >
+                            {auth.loading && <LinearBuffer/>}
+                            <Toolbar disableGutters={this.state.open}>
+                                {!isEmpty(back_path) ? (<Button
                                     aria-owns='menu-appbar'
                                     aria-haspopup="true"
                                     color="inherit"
-                                    onClick={this.handleMenu}
+                                    component={Link}
+                                    to={back_path}
                                 >
-                                    {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
-                                    {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
-                                    {/*className={classes.avatar}/>*/}
-                                    <AccountCircle/>
-                                </IconButton>
-                                <Menu
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={this.handleClose}
-                                    TransitionComponent={Fade}
-                                >
-                                    <MenuItem className={classes.menuItem}>
-                                        <ListItem button onClick={this.onLogoutLink}>
+                                    <ArrowBackIos /> Back
+                                </Button>) : null}
+                                <Typography
+                                    className={classes.appBarTitle}
+                                    variant="h6"
+                                    color="inherit"
+                                    noWrap>
+                                    {name}
+                                </Typography>
+                                <div>
+                                    <IconButton
+                                        aria-owns='menu-appbar'
+                                        aria-haspopup="true"
+                                        color="inherit"
+                                        onClick={this.handleMenu}
+                                    >
+                                        {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
+                                        {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
+                                        {/*className={classes.avatar}/>*/}
+                                        <AccountCircle/>
+                                    </IconButton>
+                                    <Menu
+                                        anchorEl={anchorEl}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        open={open}
+                                        onClose={this.handleClose}
+                                        TransitionComponent={Fade}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                    >
+                                        <MenuItem onClick={this.onLogoutLink}>
                                             <ListItemIcon className={classes.icon}>
                                                 <PlayForWork />
                                             </ListItemIcon>
                                             <ListItemText classes={{ primary: classes.primary }} inset primary="Logout" />
-                                        </ListItem>
-                                    </MenuItem>
-                                </Menu>
-                            </div>
-                        </Toolbar>
-                    </AppBar>
-                    <Drawer
-                        variant="temporary"
-                        className={classNames(classes.drawer, {
-                            [classes.drawerOpen]: this.state.open,
-                            [classes.drawerClose]: !this.state.open,
-                        })}
-                        classes={{
-                            paper: classNames(classes.mainDrawer, {
-                                [classes.drawerOpen]: this.state.open,
-                                [classes.drawerClose]: !this.state.open,
-                            }),
-                        }}
-                        open={this.state.open}
-                        onClose={this.handleDrawerClose}
-                    >
-                        <div className={classes.toolbar}
-                             onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
-                            <img className={classes.toolbarImg}
-                                 src={`data:image/png;base64,${headerImage}`}
-                                 alt="SalesRobot Logo"/>
-                        </div>
-                        <List>
-                            <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: !this.state.open,})}
-                                        color="inherit" noWrap>
-                                Navigation
-                            </Typography>
-                            {mainListItems}
-                        </List>
-                    </Drawer>
-                </Hidden>
-                <Hidden smDown>
-                    <AppBar
-                        position="fixed"
-                        className={classNames(classes.appBar, {
-                            [classes.appBarShift]: !this.state.open,
-                        })}
-                    >
-                        <Toolbar disableGutters={this.state.open}>
-                            {!isEmpty(back_path) ? (<Button
-                                aria-owns='menu-appbar'
-                                aria-haspopup="true"
-                                color="inherit"
-                                component={Link}
-                                to={back_path}
-                            >
-                                <ArrowBackIos /> Back
-                            </Button>) : null}
-                            <Typography
-                                className={classes.appBarTitle}
-                                variant="h6"
-                                color="inherit"
-                                noWrap>
-                                {name}
-                            </Typography>
-                            <div>
-                                <IconButton
-                                    aria-owns='menu-appbar'
-                                    aria-haspopup="true"
-                                    color="inherit"
-                                    onClick={this.handleMenu}
-                                >
-                                    {/*<Avatar alt={`${user.firstname} ${user.lastname}`}*/}
-                                    {/*src={`http://www.analyticsapi.salesrobot.com${user.avatar}`}*/}
-                                    {/*className={classes.avatar}/>*/}
-                                    <AccountCircle/>
-                                </IconButton>
-                                <Menu
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                    open={open}
-                                    onClose={this.handleClose}
-                                    TransitionComponent={Fade}
-                                >
-                                    <MenuItem onClick={this.onLogoutLink}>
-                                        <ListItemIcon className={classes.icon}>
-                                            <PlayForWork />
-                                        </ListItemIcon>
-                                        <ListItemText classes={{ primary: classes.primary }} inset primary="Logout" />
-                                    </MenuItem>
-                                </Menu>
-                            </div>
-                        </Toolbar>
-                    </AppBar>
-                    <Drawer
-                        variant="permanent"
-                        className={classNames(classes.drawer, {
-                            [classes.drawerOpen]: !this.state.open,
-                            [classes.drawerClose]: this.state.open,
-                        })}
-                        classes={{
-                            paper: classNames(classes.mainDrawer, {
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Toolbar>
+                        </AppBar>
+                        <Drawer
+                            variant="permanent"
+                            className={classNames(classes.drawer, {
                                 [classes.drawerOpen]: !this.state.open,
                                 [classes.drawerClose]: this.state.open,
-                            }),
-                        }}
-                        open={!this.state.open}
-                    >
-                        <div className={classes.toolbar}
-                             onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
-                            <img className={classes.toolbarImg}
-                                 src={`data:image/png;base64,${headerImage}`}
-                                 alt="SalesRobot Logo"/>
-                        </div>
-                        <List>
-                            <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: this.state.open,})}
-                                        color="inherit" noWrap>
-                                Navigation
-                            </Typography>
-                            {mainListItems}
-                        </List>
-                    </Drawer>
-                </Hidden>
-                {children}
-            </div>
+                            })}
+                            classes={{
+                                paper: classNames(classes.mainDrawer, {
+                                    [classes.drawerOpen]: !this.state.open,
+                                    [classes.drawerClose]: this.state.open,
+                                }),
+                            }}
+                            open={!this.state.open}
+                        >
+                            <div className={classes.toolbar}
+                                 onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
+                                <img className={classes.toolbarImg}
+                                     src={`data:image/png;base64,${headerImage}`}
+                                     alt="SalesRobot Logo"/>
+                            </div>
+                            <List>
+                                <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: this.state.open,})}
+                                            color="inherit" noWrap>
+                                    Navigation
+                                </Typography>
+                                <MainListItems/>
+                            </List>
+                        </Drawer>
+                    </Hidden>
+                    {children}
+                </div>
+            </Wrapper>
+
         );
 
         return (

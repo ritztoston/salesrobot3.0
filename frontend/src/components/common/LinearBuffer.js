@@ -6,13 +6,14 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 const styles = {
     root: {
         flexGrow: 1,
+        zIndex: 99999,
     },
 };
 
 class LinearBuffer extends React.Component {
     state = {
-        completed: 40,
-        buffer: 50,
+        completed: 30,
+        buffer: 100,
     };
 
     componentDidMount() {
@@ -25,15 +26,10 @@ class LinearBuffer extends React.Component {
 
     progress = () => {
         const { completed } = this.state;
-        if (completed < 96) {
+        if (completed < 90) {
             const diff = Math.random() * 10;
-            const diff2 = Math.random() * 10;
-            this.setState({ completed: completed + diff, buffer: completed + diff + diff2 });
-        } //else {
-        //     const diff = Math.random() * 10;
-        //     const diff2 = Math.random() * 10;
-        //     this.setState({ completed: completed + diff, buffer: completed + diff + diff2 });
-        // }
+            this.setState({ completed: completed + diff});
+        }
     };
 
     render() {

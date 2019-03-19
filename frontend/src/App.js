@@ -15,7 +15,8 @@ import Accounts from "./components/accounts/Accounts";
 import AccountDetails from "./components/accounts/AccountDetails";
 import PrivateRoute from "./components/common/PrivateRoute";
 import DivWrapper from "./components/hoc/DivWrapper";
-
+import Campaigns from "./components/accounts/Campaigns";
+import CampaignAccounts from "./components/accounts/CampaignAccounts";
 
 const cookie = new Cookies();
 const cookie_token = cookie.get('sra_token');
@@ -44,6 +45,8 @@ class App extends Component {
                         <Switch>
                             <PrivateRoute exact path="/dashboard" component={Dashboard} name={"Dashboard"}/>
                             <PrivateRoute exact path="/accounts" component={Accounts} name={"Accounts"}/>
+                            <PrivateRoute exact path="/campaigns" component={CampaignAccounts} name={"Campaigns"}/>
+                            <PrivateRoute exact path="/campaigns/:account" component={Campaigns} name={"Campaigns"}/>
                             <PrivateRoute exact path="/accounts/:account" component={AccountDetails} name={"Account Details"} back_path="/accounts"/>
                         </Switch>
                     </DivWrapper>

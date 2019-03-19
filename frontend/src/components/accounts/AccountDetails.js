@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from "prop-types";
 import {Helmet} from "react-helmet";
 import {Base64} from 'js-base64';
-import {getTemplate, getFeedTemplate, getRss, getRSSData} from "../../actions/accountActions";
+import {getRSSData} from "../../actions/accountActions";
 import connect from "react-redux/es/connect/connect";
 import renderHTML from 'react-render-html';
 import isEmpty from "../../validations/isEmpty";
@@ -61,6 +61,9 @@ const styles = theme => ({
         right: 40,
         left: 'auto',
         position: 'fixed',
+    },
+    fabComponent: {
+        padding: 6,
         opacity: 0.2,
         transition: '.4s all',
         '&:hover' : {
@@ -197,16 +200,20 @@ class AccountDetails extends Component {
         const html_content = (
             <DivWrapper>
                 {!isEmpty(parsed.view) && parsed.view === 'clear' ? null : (<div className={classes.appBarSpacer} />)}
-                <div className={classes.fab}>
-                    <Fab color="primary" title="Refresh" aria-label="Refresh" onClick={this.refresh} style={{display: 'block', marginBottom: 10}}>
-                        <Refresh />
-                    </Fab>
-                    <Fab color="primary" title="Clear View" aria-label="Apps" onClick={this.visibility} style={{display: 'block',}}>
-                        {!isEmpty(parsed.view) && parsed.view === 'clear' ? (<VisibilityOff />) : (<Visibility />)}
-                    </Fab>
-                </div>
+                <List component="nav" className={classes.fab}>
+                    <ListItem className={classes.fabComponent}>
+                        <Fab color="primary" title="Refresh" aria-label="Refresh" onClick={this.refresh}>
+                            <Refresh />
+                        </Fab>
+                    </ListItem>
+                    <ListItem className={classes.fabComponent}>
+                        <Fab color="primary" title={!isEmpty(parsed.view) && parsed.view === 'clear' ? "Revert View" : "Clear View"} aria-label="Apps" onClick={this.visibility}>
+                            {!isEmpty(parsed.view) && parsed.view === 'clear' ? (<VisibilityOff />) : (<Visibility />)}
+                        </Fab>
+                    </ListItem>
+                </List>
 
-                {renderHTML('<style type="text/css">ul {padding-left: 40px;}</style>')}
+                {renderHTML('<style type="text/css">ul, ol {padding-left: 40px;}</style>')}
                 <div dangerouslySetInnerHTML={this.createMarkup()}/>
             </DivWrapper>
         );
@@ -278,9 +285,6 @@ AccountDetails.propTypes = {
     auth: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     accounts: PropTypes.object.isRequired,
-    getTemplate: PropTypes.func.isRequired,
-    getFeedTemplate: PropTypes.func.isRequired,
-    getRss: PropTypes.func.isRequired,
     getRSSData: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
 };
@@ -291,4 +295,4 @@ const mapStateToProps = state => ({
     accounts: state.accounts
 });
 
-export default connect(mapStateToProps, {getTemplate, getRss, getFeedTemplate, getRSSData})(withStyles(styles)(AccountDetails));
+export default connect(mapStateToProps, {getRSSData})(withStyles(styles)(AccountDetails));
