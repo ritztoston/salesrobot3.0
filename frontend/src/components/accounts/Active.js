@@ -11,6 +11,7 @@ import TimeAgo from "react-timeago/lib/index";
 import BubbleText from "../common/BubbleText";
 import {Visibility} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
+import ContentLoader from "react-content-loader";
 
 const styles = {
     root: {
@@ -29,8 +30,28 @@ const styles = {
     },
 };
 
-const Active = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
+const Loader = props => {
+    return (
+        <ContentLoader
+            height={20}
+            width={1060}
+            speed={2}
+            primaryColor="#d9d9d9"
+            secondaryColor="#ecebeb"
+            {...props}
+        >
+            <rect x="0" y="3" rx="6" ry="6" width={35} height="14" />
+            <rect x="270" y="3" rx="6" ry="6" width={120} height="14" />
+            <rect x="585" y="3" rx="6" ry="6" width={85} height="14" />
+            <rect x="940" y="3" rx="6" ry="6" width={120} height="14" />
+        </ContentLoader>
+    )
+};
+
+const Active = ({data, classes, onClick, onChange, page, rowsPerPage, loading}) => {
     const {count, results} = data;
+    const array = new Array(50).fill("");
+
 
     return (
         <div className={classes.root}>
@@ -44,7 +65,7 @@ const Active = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {!isEmpty(results) && results.map(result => (
+                    {!isEmpty(results) && !loading ? results.map(result => (
                         <TableRow key={result.id} onClick={() => onClick(result.id)} style={{cursor: 'pointer'}} hover>
                             <TableCell component="th" scope="row">
                                 {result.status === 'submitted' ? (<BubbleText text={"Sending"}/>) : (<BubbleText text={"Suspended"}/>)}
@@ -55,7 +76,15 @@ const Active = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
                                 TODO
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )) :
+                        array.map((e, i) => (
+                            <TableRow key={i}>
+                                <TableCell component="th" scope="row" colSpan={4}>
+                                    <Loader/>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    }
                 </TableBody>
                 <TableFooter>
                     <TableRow>

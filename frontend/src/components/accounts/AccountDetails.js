@@ -9,7 +9,7 @@ import isEmpty from "../../validations/isEmpty";
 import DivWrapper from "../hoc/DivWrapper";
 import {withStyles, Typography, ListItem, List, ListItemIcon, ListItemText,
     Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab} from '@material-ui/core';
-import {Drafts as DraftsIcon, Refresh, VerticalAlignBottom, Error, Visibility, VisibilityOff} from '@material-ui/icons';
+import {Drafts as DraftsIcon, Refresh, VerticalAlignBottom, Error, Visibility, VisibilityOff, Cached} from '@material-ui/icons';
 import {Link} from "react-router-dom";
 import firstLetterCapital from "../../utils/firstLetterCapital";
 import classNames from "classnames";
@@ -83,6 +83,7 @@ class AccountDetails extends Component {
         this.refresh = this.refresh.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.visibility = this.visibility.bind(this);
+        this.refetch = this.refetch.bind(this);
     };
 
     refresh() {
@@ -100,6 +101,10 @@ class AccountDetails extends Component {
         else
             push(`${pathname}?view=clear`);
 
+    };
+
+    refetch() {
+        console.log('deleted contents')
     };
 
     closeModal() {
@@ -211,6 +216,14 @@ class AccountDetails extends Component {
                             {!isEmpty(parsed.view) && parsed.view === 'clear' ? (<VisibilityOff />) : (<Visibility />)}
                         </Fab>
                     </ListItem>
+
+                    {/*{!isEmpty(parsed.view) && parsed.view === 'clear' ? null : (*/}
+                        {/*<ListItem className={classes.fabComponent}>*/}
+                            {/*<Fab color="primary" title="Re-Fetch Contents" aria-label="Apps" onClick={this.refetch}>*/}
+                                {/*<Cached />*/}
+                            {/*</Fab>*/}
+                        {/*</ListItem>*/}
+                    {/*)}*/}
                 </List>
 
                 {renderHTML('<style type="text/css">ul, ol {padding-left: 40px;}</style>')}

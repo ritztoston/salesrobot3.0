@@ -12,10 +12,11 @@ import Sent from "./Sent";
 import connect from "react-redux/es/connect/connect";
 import {getCampaignData, messageNextPage} from "../../actions/accountActions";
 import Active from "./Active";
-import Wrapper from "../hoc/Wrapper";
 import Draft from "./Draft";
-import LinearBuffer from "../common/LinearBuffer";
 import isEmpty from "../../validations/isEmpty";
+import ContentLoader from "react-content-loader";
+import classNames from "classnames";
+
 
 const styles = theme => ({
     root: {
@@ -30,6 +31,10 @@ const styles = theme => ({
         backgroundColor: '#FFFFFF',
         overflow: 'auto',
     },
+    contentLoading: {
+        height: '100vh',
+        overflow: 'hidden'
+    },
     appbar: {
         backgroundColor: '#FFFFFF',
         color: '#0090ff',
@@ -37,6 +42,9 @@ const styles = theme => ({
     tab_label: {
         color: '#FFFFFF',
         zIndex: 2,
+        '&:disabled': {
+            color: '#FFFFFF'
+        }
     }
 });
 
@@ -84,11 +92,11 @@ class Campaigns extends Component {
 
     render() {
         const {page, rowsPerPage} = this.state;
-        const {classes} = this.props;
+        const {classes, auth} = this.props;
         const {sent, active, draft} = this.props.accounts.campaigns;
 
         return (
-            <main className={classes.content}>
+            <main className={classNames(classes.content, {[classes.contentLoading]: auth.loading})}>
                 <Helmet>
                     <title>Campaigns | SalesRobot3.0</title>
                 </Helmet>
@@ -114,14 +122,14 @@ class Campaigns extends Component {
                                     }
                                 }}
                             >
-                                <Tab label="Sent" className={classes.tab_label}/>
-                                <Tab label="Active" className={classes.tab_label}/>
-                                <Tab label="Draft" className={classes.tab_label}/>
+                                <Tab label="Sent" className={classes.tab_label} disabled={auth.loading}/>
+                                <Tab label="Active" className={classes.tab_label} />
+                                <Tab label="Draft" className={classes.tab_label} disabled={auth.loading}/>
                             </Tabs>
                         </AppBar>
-                        {this.state.value_tab === 0 && !isEmpty(sent) && <Sent data={sent} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage}/>}
-                        {this.state.value_tab === 1 && !isEmpty(active) && <Active data={active} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage}/>}
-                        {this.state.value_tab === 2 && !isEmpty(draft) && <Draft data={draft} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage}/>}
+                        {this.state.value_tab === 0 && <Sent data={sent} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage}/>}
+                        {this.state.value_tab === 1 && <Active data={active} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage} loading={auth.loading}/>}
+                        {this.state.value_tab === 2 && <Draft data={draft} onChange={this.changePage} page={page} rowsPerPage={rowsPerPage}/>}
                     </Paper>
                 </div>
             </main>

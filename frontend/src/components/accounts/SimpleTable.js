@@ -29,8 +29,9 @@ function createData(account, team_lead, shorten) {
 
 const data = [
     createData('SOS International', 'Gigi Melecio', 'sosi'),
-    createData('Leidos', 'Marc Mondala', 'leidos'),
-    createData('American Systems', '', 'americansys'),
+    createData('Leidos', 'Jhoanna Valdez', 'leidos'),
+    createData('American Systems', 'Marc Mondala', 'americansys'),
+    createData('Perspecta', 'Ray Santos', 'perspecta'),
     createData('ExecutiveBiz', 'Em Culion', 'executivebiz'),
 ];
 
