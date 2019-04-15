@@ -28,11 +28,13 @@ function createData(account, team_lead, shorten) {
 }
 
 const data = [
-    createData('SOS International', 'Gigi Melecio', 'sosi'),
+    createData('AECOM', 'Gigi Melecio', 'aecom'),
     createData('Leidos', 'Jhoanna Valdez', 'leidos'),
-    createData('American Systems', 'Marc Mondala', 'americansys'),
+    createData('SOS International', 'Gigi Melecio', 'sosi'),
     createData('Perspecta', 'Ray Santos', 'perspecta'),
-    createData('ExecutiveBiz', 'Em Culion', 'executivebiz'),
+    createData('Iridium', 'Gigi Melecio', 'iridium'),
+    createData('American Systems', 'Marc Mondala', 'americansys'),
+    // createData('ExecutiveBiz', 'Em Culion', 'executivebiz'),
 ];
 
 function SimpleTable(props) {

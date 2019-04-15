@@ -1,17 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {Table, TableBody, TableCell, TableHead, TableRow} from '@material-ui/core';
+import {
+    Button, Dialog,
+    DialogActions,
+    DialogContent, DialogContentText,
+    DialogTitle, List, ListItem, ListItemIcon, ListItemText,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Typography
+} from '@material-ui/core';
 import TablePagination from "@material-ui/core/TablePagination";
 import TableFooter from "@material-ui/core/TableFooter";
 import isEmpty from "../../validations/isEmpty";
 import 'moment-timezone';
 import moment from 'moment';
-import TimeAgo from "react-timeago/lib/index";
 import BubbleText from "../common/BubbleText";
-import {Visibility} from "@material-ui/icons";
-import Typography from "@material-ui/core/Typography";
+import {Pause, Edit, Visibility, Error, Drafts as DraftsIcon, VerticalAlignBottom} from "@material-ui/icons";
 import ContentLoader from "react-content-loader";
+import Fab from "@material-ui/core/Fab";
+import {Link} from "react-router-dom";
+import TimeAgo from 'react-timeago';
+import Wrapper from "../hoc/Wrapper";
 
 const styles = {
     root: {
@@ -28,30 +41,15 @@ const styles = {
         margin: '0 2px',
         borderRadius: '5px',
     },
+    fab: {
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        color: '#0D2C54',
+    },
 };
 
-const Loader = props => {
-    return (
-        <ContentLoader
-            height={20}
-            width={1060}
-            speed={2}
-            primaryColor="#d9d9d9"
-            secondaryColor="#ecebeb"
-            {...props}
-        >
-            <rect x="0" y="3" rx="6" ry="6" width={35} height="14" />
-            <rect x="270" y="3" rx="6" ry="6" width={120} height="14" />
-            <rect x="585" y="3" rx="6" ry="6" width={85} height="14" />
-            <rect x="940" y="3" rx="6" ry="6" width={120} height="14" />
-        </ContentLoader>
-    )
-};
-
-const Active = ({data, classes, onClick, onChange, page, rowsPerPage, loading}) => {
+const Active = ({data, classes, onClick, onChange, onPause, page, rowsPerPage, loading, loadingContent, onPlayView}) => {
     const {count, results} = data;
-    const array = new Array(50).fill("");
-
 
     return (
         <div className={classes.root}>
@@ -59,31 +57,48 @@ const Active = ({data, classes, onClick, onChange, page, rowsPerPage, loading}) 
                 <TableHead>
                     <TableRow>
                         <TableCell>Status</TableCell>
-                        <TableCell align="left">Campaign</TableCell>
-                        <TableCell>Sending</TableCell>
+                        <TableCell align="left">Title</TableCell>
+                        <TableCell>Status</TableCell>
                         <TableCell align="right">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {!isEmpty(results) && !loading ? results.map(result => (
-                        <TableRow key={result.id} onClick={() => onClick(result.id)} style={{cursor: 'pointer'}} hover>
-                            <TableCell component="th" scope="row">
-                                {result.status === 'submitted' ? (<BubbleText text={"Sending"}/>) : (<BubbleText text={"Suspended"}/>)}
-                            </TableCell>
-                            <TableCell align="left">{result.subject.replace('[TODAY:m/d/Y]', moment(result.embargo).tz("America/New_York").format("MM/DD/YYYY"))}</TableCell>
-                            <TableCell><TimeAgo date={result.embargo}/></TableCell>
-                            <TableCell align="right">
-                                TODO
-                            </TableCell>
-                        </TableRow>
-                    )) :
-                        array.map((e, i) => (
-                            <TableRow key={i}>
-                                <TableCell component="th" scope="row" colSpan={4}>
-                                    <Loader/>
+                    {!isEmpty(results) && !loading ? results.map(result => {
+                            const campaignTime = moment(result.embargo).add(4, 'hours').format();
+                            const currentDatetime = moment().format();
+                            const isSending = moment(campaignTime).isBefore(currentDatetime);
+
+
+                            return (
+                                <TableRow key={result.id} onClick={onPlayView(result.id, isSending, true)} style={{cursor: 'pointer'}} hover>
+                                    <TableCell component="th" scope="row">
+                                        {result.status === 'submitted' ? (<BubbleText text={"Sending"}/>) : (<BubbleText text={"Suspended"}/>)}
+                                    </TableCell>
+                                    <TableCell align="left">{result.subject.replace('[TODAY:m/d/Y]', moment(result.embargo).tz("America/New_York").format("MM/DD/YYYY"))}{result.subject.includes("[Admin]") ? (" - "+moment(result.embargo).tz("America/New_York").format("MM/DD/YYYY")) : null}</TableCell>
+                                    <TableCell>{isSending ? ('Sending...') : (<TimeAgo date={moment(result.embargo).add(4, 'hours').format('YYYY-MM-DD HH:mm:ss')}/>)}</TableCell>
+                                    <TableCell align="right">
+                                        <Fab size="small" aria-label="Pause" className={classes.fab} onClick={onPause(result.id, result.subject.replace('[TODAY:m/d/Y]', moment(result.embargo).tz("America/New_York").format("MM/DD/YYYY")))}>
+                                            <Pause fontSize="small"/>
+                                        </Fab>
+                                        {/*<Fab size="small" aria-label="Edit" className={classes.fab}>*/}
+                                        {/*<Edit fontSize="small"/>*/}
+                                        {/*</Fab>*/}
+                                        <Fab size="small" aria-label="Edit" className={classes.fab} onClick={onPlayView(result.id, isSending, true)}>
+                                            <Visibility fontSize="small"/>
+                                        </Fab>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        ) :
+                        (!loading && isEmpty(results) ? (<Wrapper>
+                            <TableRow key={1}>
+                                <TableCell colSpan={5} component="th" scope="row">
+                                    <Typography component="div" style={{textAlign: 'center', padding: '10px 0', fontStyle: 'italic', color: '#696969',}}>
+                                        - No active campaigns -
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        ))
+                        </Wrapper>) : loadingContent)
                     }
                 </TableBody>
                 <TableFooter>

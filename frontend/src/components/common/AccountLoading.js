@@ -8,7 +8,7 @@ import DivWrapper from "../hoc/DivWrapper";
 const styles = theme => ({
     content: {
         flexGrow: 1,
-        padding: theme.spacing.unit * 3,
+        padding: '40px 8% 24px 8%',
         height: '100vh',
     },
     toolbar: {

@@ -26,12 +26,12 @@ const MainListItems = ({onClick}) => {
                 </ListItemIcon>
                 <ListItemText primary="Accounts"/>
             </ListItem>
-            <ListItem button component={Link} to="/campaigns" onClick={onClick}>
-                <ListItemIcon>
-                    <Email/>
-                </ListItemIcon>
-                <ListItemText primary="Campaigns"/>
-            </ListItem>
+            {/*<ListItem button component={Link} to="/campaigns" onClick={onClick}>*/}
+                {/*<ListItemIcon>*/}
+                    {/*<Email/>*/}
+                {/*</ListItemIcon>*/}
+                {/*<ListItemText primary="Campaigns"/>*/}
+            {/*</ListItem>*/}
         </Wrapper>
     );
 };

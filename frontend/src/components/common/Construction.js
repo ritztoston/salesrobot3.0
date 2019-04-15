@@ -7,7 +7,7 @@ const styles = theme => ({
     appBarSpacer: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
-        padding: theme.spacing.unit * 3,
+        padding: '40px 8% 24px 8%',
         backgroundColor: '#F6F6F6',
         position: 'relative',
     },

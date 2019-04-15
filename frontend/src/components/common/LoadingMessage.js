@@ -21,8 +21,6 @@ class Loading extends Component {
         super(props);
         this.state = {
             completed: 0,
-            textArray: ['Loading', 'Fetching data', 'Talking to the server', 'Server replied', 'Still loading'],
-            textIdx: 0
         }
     }
 
@@ -46,13 +44,12 @@ class Loading extends Component {
 
     render() {
         const { classes } = this.props;
-        const textThatChanges = this.state.textArray[this.state.textIdx % this.state.textArray.length];
 
         return (
             <main className={classes.content}>
                 <div className="u-container-center u-text-align-center u-bg-transparent">
                     <Loader type="Rings" color="#0090ff" height={60} width={60} />
-                    <Typography component={'div'} style={{fontStyle: 'italic'}}>{textThatChanges}</Typography>
+                    <Typography component={'div'} style={{fontStyle: 'italic'}}>{this.props.children}</Typography>
                 </div>
             </main>
         )

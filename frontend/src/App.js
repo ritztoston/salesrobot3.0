@@ -17,9 +17,13 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import DivWrapper from "./components/hoc/DivWrapper";
 import Campaigns from "./components/accounts/Campaigns";
 import CampaignAccounts from "./components/accounts/CampaignAccounts";
+import ViewCampaign from "./components/accounts/ViewCampaign";
+import CampaignViewDetails from "./components/accounts/CampaignViewDetails";
 
 const cookie = new Cookies();
 const cookie_token = cookie.get('sra_token');
+
+
 
 if(cookie_token) {
     setAuthToken(cookie_token);
@@ -45,9 +49,11 @@ class App extends Component {
                         <Switch>
                             <PrivateRoute exact path="/dashboard" component={Dashboard} name={"Dashboard"}/>
                             <PrivateRoute exact path="/accounts" component={Accounts} name={"Accounts"}/>
-                            <PrivateRoute exact path="/campaigns" component={CampaignAccounts} name={"Campaigns"}/>
-                            <PrivateRoute exact path="/campaigns/:account" component={Campaigns} name={"Campaigns"}/>
                             <PrivateRoute exact path="/accounts/:account" component={AccountDetails} name={"Account Details"} back_path="/accounts"/>
+                            <PrivateRoute exact path="/campaigns/:account/:id" component={CampaignViewDetails} name={"Campaign Details"} back_path="/campaigns/[account]/?tab=active"/>
+                            <PrivateRoute exact path="/campaigns" component={CampaignAccounts} name={"Campaigns"}/>
+                            <PrivateRoute exact path="/campaigns/:account" component={Campaigns} name={"Campaigns"} back_path="/campaigns"/>
+                            <PrivateRoute exact path="/campaigns/:account/:id" component={ViewCampaign} name={"Campaigns"} back_path="/campaigns/[account]"/>
                         </Switch>
                     </DivWrapper>
                 </Router>

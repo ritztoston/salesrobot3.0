@@ -9,9 +9,10 @@ import 'moment-timezone';
 import moment from 'moment';
 import TimeAgo from "react-timeago/lib/index";
 import BubbleText from "../common/BubbleText";
-import {Visibility} from "@material-ui/icons";
+import {Edit, Pause, PlayArrow, Replay, Visibility} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import Wrapper from "../hoc/Wrapper";
+import Fab from "@material-ui/core/Fab";
 
 const styles = {
     root: {
@@ -28,9 +29,14 @@ const styles = {
         margin: '0 2px',
         borderRadius: '5px',
     },
+    fab: {
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        color: '#0D2C54',
+    },
 };
 
-const Draft = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
+const Draft = ({data, classes, onClick, onChange, page, rowsPerPage, onPlayView, loading, loadingContent}) => {
     const {count, results} = data;
 
     const content = (
@@ -38,20 +44,38 @@ const Draft = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
             <TableHead>
                 <TableRow>
                     <TableCell>Status</TableCell>
-                    <TableCell align="left">Campaign</TableCell>
+                    <TableCell align="left">Title</TableCell>
                     <TableCell align="right">Actions</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
-                {results.map(result => (
-                    <TableRow key={result.id} onClick={() => onClick(result.id)} style={{cursor: 'pointer'}} hover>
+                {/*<TableRow key={result.id} onClick={() => onClick(result.id)} style={{cursor: 'pointer'}} hover>*/}
+                {!isEmpty(results) && !loading ? results.map(result => (
+                    <TableRow key={result.id} onClick={onPlayView(result.id)} style={{cursor: 'pointer'}} hover>
                         <TableCell component="th" scope="row">
                             {result.status === 'draft' && (<BubbleText text={"Draft"}/>)}
                         </TableCell>
                         <TableCell align="left">{result.subject.replace('[TODAY:m/d/Y]', moment(result.embargo).tz("America/New_York").format("MM/DD/YYYY"))}</TableCell>
-                        <TableCell align="right">TODO</TableCell>
+                        <TableCell align="right">
+                            <Fab size="small" aria-label="Pause" className={classes.fab} onClick={onPlayView(result.id)}>
+                                <PlayArrow fontSize="small"/>
+                            </Fab>
+                            {/*<Fab size="small" aria-label="Edit" className={classes.fab}>*/}
+                                {/*<Edit fontSize="small"/>*/}
+                            {/*</Fab>*/}
+                        </TableCell>
                     </TableRow>
-                ))}
+                )) :
+                    (!loading && isEmpty(results) ? (<Wrapper>
+                        <TableRow key={1}>
+                            <TableCell colSpan={5} component="th" scope="row">
+                                <Typography component="div" style={{textAlign: 'center', padding: '10px 0', fontStyle: 'italic', color: '#696969',}}>
+                                    - No drafts -
+                                </Typography>
+                            </TableCell>
+                        </TableRow>
+                    </Wrapper>) : loadingContent)
+                }
             </TableBody>
             <TableFooter>
                 <TableRow>
@@ -69,27 +93,7 @@ const Draft = ({data, classes, onClick, onChange, page, rowsPerPage}) => {
     return (
         <div className={classes.root}>
             <Table className={classes.table}>
-                {!isEmpty(results) ? content : (
-                    <Wrapper>
-                        <TableRow key={1} style={{cursor: 'pointer'}}>
-                            <TableCell colSpan={5} component="th" scope="row">
-                                <Typography component="div" style={{textAlign: 'center', padding: '30px 0', fontStyle: 'italic',}}>
-                                    - No drafts -
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
-                        <TableFooter>
-                            <TableRow>
-                                <TablePagination
-                                    rowsPerPageOptions={[rowsPerPage]}
-                                    count={count}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onChangePage={onChange}/>
-                            </TableRow>
-                        </TableFooter>
-                    </Wrapper>
-                )}
+                {content}
             </Table>
         </div>
     );

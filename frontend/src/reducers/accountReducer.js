@@ -4,7 +4,7 @@ import {
     GET_RSS_DATA,
     GET_RSS_FEED_TEMPLATE,
     GET_INDEX_DATA,
-    CLEAR_ACCOUNT_DATA, CLEAR_CAMPAIGN_DATA, GET_SENT_DATA, GET_ACTIVE_DATA, GET_DRAFT_DATA
+    CLEAR_ACCOUNT_DATA, CLEAR_CAMPAIGN_DATA, GET_SENT_DATA, GET_ACTIVE_DATA, GET_DRAFT_DATA, SET_CAMPAIGN_DETAIL_VIEW
 } from '../actions/types';
 
 const initialState = {
@@ -16,6 +16,7 @@ const initialState = {
         sent: {},
         active: {},
         draft: {},
+        view: {},
     },
 };
 
@@ -73,6 +74,14 @@ export default function(state = initialState, action){
                     draft: action.payload,
                 },
             };
+        case SET_CAMPAIGN_DETAIL_VIEW:
+            return {
+                ...state,
+                campaigns: {
+                    ...state.campaigns,
+                    view: action.payload,
+                },
+            };
         case CLEAR_CAMPAIGN_DATA:
             return {
                 ...state,
@@ -80,6 +89,7 @@ export default function(state = initialState, action){
                     sent: {},
                     active: {},
                     draft: {},
+                    view: [],
                 },
             };
         case CLEAR_ERRORS:
