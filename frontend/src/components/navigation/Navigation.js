@@ -166,7 +166,6 @@ class Navigation extends React.Component {
 
         const nav_content = (
             <Wrapper>
-
                 <div className={classes.root}>
                     <CssBaseline/>
                     <Hidden mdUp>
@@ -348,7 +347,7 @@ class Navigation extends React.Component {
                                      src={`data:image/png;base64,${headerImage}`}
                                      alt="SalesRobot Logo"/>
                             </div>
-                            <List>
+                            <List style={{paddingTop: 10,}}>
                                 <Typography className={classNames(classes.typoNav, {[classes.typoNavClose]: this.state.open,})}
                                             color="inherit" noWrap>
                                     Navigation

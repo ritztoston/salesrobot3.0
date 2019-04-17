@@ -133,7 +133,6 @@ class Campaigns extends Component {
         this.setState({open: false, value_tab: 2});
         this.props.history.push(`/campaigns/${account}?tab=draft`);
         this.props.enqueueSnackbar(`Success! Paused ${campaign_title}`, {variant});
-
     };
 
     handleChangeTab(e, value_tab) {

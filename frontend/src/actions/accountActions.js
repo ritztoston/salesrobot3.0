@@ -147,14 +147,19 @@ export const getCampaignDetailView = (account, id) => dispatch => {
         })
 };
 
-export const getMessageSent = (account, id) => dispatch => {
-    axios.get(`http://www.analyticsapi.salesrobot.com/${account}/messages/update/sent/${id}`)
-        .then(res => {
-            dispatch(setMessageSent(res));
-        })
-        .catch(err => {
-            dispatch(setError(err))
-        })
+export const getMessageSent = (account, id) => async dispatch => {
+    // axios.get(`http://www.analyticsapi.salesrobot.com/${account}/messages/update/sent/${id}`)
+    //     .then(res => {
+    //         dispatch(setMessageSent(res));
+    //     })
+    //     .catch(err => {
+    //         dispatch(setError(err))
+    //     })
+    try {
+        await axios.get(`http://www.analyticsapi.salesrobot.com/${account}/messages/update/sent/${id}`);
+    } catch (err) {
+        dispatch(setError(err))
+    }
 };
 
 export const getMessageSubmitted = (account, id) => dispatch => {
@@ -228,8 +233,8 @@ export const setLoadingTrue = () => {
 
 export const setGLoadingTrue = message => {
     const payload = {
-      loading: true,
-      message
+        loading: true,
+        message
     };
 
     return {

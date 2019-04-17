@@ -22,19 +22,19 @@ const styles = {
 };
 
 let id = 0;
-function createData(account, team_lead, shorten) {
+function createData(account, schedule, team_lead, shorten) {
     id += 1;
-    return { id, account, team_lead, shorten};
+    return { id, account, schedule, team_lead, shorten};
 }
 
 const data = [
-    createData('AECOM', 'Gigi Melecio', 'aecom'),
-    createData('Leidos', 'Jhoanna Valdez', 'leidos'),
-    createData('SOS International', 'Gigi Melecio', 'sosi'),
-    createData('Perspecta', 'Ray Santos', 'perspecta'),
-    createData('Iridium', 'Gigi Melecio', 'iridium'),
-    createData('American Systems', 'Marc Mondala', 'americansys'),
-    // createData('ExecutiveBiz', 'Em Culion', 'executivebiz'),
+    createData('AECOM', '6:00:00 AM','Gigi Melecio', 'aecom'),
+    createData('Leidos', '6:00:00 AM','Jhoanna Valdez', 'leidos'),
+    createData('SOS International', '6:00:00 AM','Gigi Melecio', 'sosi'),
+    createData('Iridium', '6:00:00 AM','Gigi Melecio', 'iridium'),
+    createData('Perspecta', '9:00:00 AM','Ray Santos', 'perspecta'),
+    createData('American Systems', '9:00:00 AM','Marc Mondala', 'americansys'),
+    // createData('ExecutiveBiz', '12:00:00 AM','Em Culion', 'executivebiz'),
 ];
 
 function SimpleTable(props) {
@@ -46,6 +46,7 @@ function SimpleTable(props) {
                 <TableHead>
                     <TableRow>
                         <CustomTableCell>Accounts</CustomTableCell>
+                        <CustomTableCell>Schedule</CustomTableCell>
                         <CustomTableCell align="right">Team Lead</CustomTableCell>
                     </TableRow>
                 </TableHead>
@@ -55,6 +56,7 @@ function SimpleTable(props) {
                             <TableCell component="th" scope="row">
                                 {n.account}
                             </TableCell>
+                            <TableCell>{n.schedule}</TableCell>
                             <TableCell align="right">{n.team_lead}</TableCell>
                         </TableRow>
                     ))}
